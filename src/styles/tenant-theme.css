@@ -1,0 +1,213 @@
+/* Tenant-specific theme variables */
+:root {
+  --color-primary: #3B82F6;
+  --color-secondary: #10B981;
+  --color-accent: #F59E0B;
+  --color-background: #FFFFFF;
+  --color-card-background: #F9FAFB;
+  --color-header-background: #FFFFFF;
+  --color-footer-background: #1F2937;
+  --color-text: #111827;
+  --color-text-secondary: #6B7280;
+  --color-link: #3B82F6;
+  --color-border: #E5E7EB;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  --font-family: 'Inter', sans-serif;
+  --font-size-small: 0.875rem;
+  --font-size-medium: 1rem;
+  --font-size-large: 1.125rem;
+  --font-size-xlarge: 1.25rem;
+}
+
+/* Apply tenant theme to components */
+.tenant-primary {
+  color: var(--color-primary);
+}
+
+.tenant-primary-bg {
+  background-color: var(--color-primary);
+}
+
+.tenant-secondary {
+  color: var(--color-secondary);
+}
+
+.tenant-secondary-bg {
+  background-color: var(--color-secondary);
+}
+
+.tenant-accent {
+  color: var(--color-accent);
+}
+
+.tenant-accent-bg {
+  background-color: var(--color-accent);
+}
+
+.tenant-text {
+  color: var(--color-text);
+}
+
+.tenant-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.tenant-background {
+  background-color: var(--color-background);
+}
+
+.tenant-card-background {
+  background-color: var(--color-card-background);
+}
+
+.tenant-header-background {
+  background-color: var(--color-header-background);
+}
+
+.tenant-footer-background {
+  background-color: var(--color-footer-background);
+}
+
+.tenant-border {
+  border-color: var(--color-border);
+}
+
+.tenant-shadow {
+  box-shadow: 0 1px 3px 0 var(--color-shadow);
+}
+
+/* Dynamic button styles */
+.tenant-btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+}
+
+.tenant-btn-primary:hover {
+  background-color: var(--color-primary);
+  opacity: 0.9;
+}
+
+.tenant-btn-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+  border: 1px solid var(--color-secondary);
+}
+
+.tenant-btn-secondary:hover {
+  background-color: var(--color-secondary);
+  opacity: 0.9;
+}
+
+.tenant-btn-outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.tenant-btn-outline:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Dynamic card styles */
+.tenant-card {
+  background-color: var(--color-card-background);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px 0 var(--color-shadow);
+}
+
+.tenant-card:hover {
+  box-shadow: 0 4px 6px -1px var(--color-shadow);
+}
+
+/* Dynamic header styles */
+.tenant-header {
+  background-color: var(--color-header-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Dynamic footer styles */
+.tenant-footer {
+  background-color: var(--color-footer-background);
+  color: white;
+}
+
+/* Dynamic text styles */
+.tenant-text-primary {
+  color: var(--color-text);
+}
+
+.tenant-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.tenant-link {
+  color: var(--color-link);
+}
+
+.tenant-link:hover {
+  color: var(--color-primary);
+  opacity: 0.8;
+}
+
+/* Dynamic form styles */
+.tenant-input {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.tenant-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dynamic navigation styles */
+.tenant-nav {
+  background-color: var(--color-header-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tenant-nav-item {
+  color: var(--color-text);
+}
+
+.tenant-nav-item:hover {
+  color: var(--color-primary);
+}
+
+.tenant-nav-item.active {
+  color: var(--color-primary);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Dynamic pricing display */
+.tenant-price {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tenant-points {
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.tenant-discount {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Responsive design with tenant colors */
+@media (max-width: 768px) {
+  .tenant-mobile-header {
+    background-color: var(--color-header-background);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .tenant-mobile-footer {
+    background-color: var(--color-footer-background);
+    color: white;
+  }
+}
