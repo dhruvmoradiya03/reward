@@ -4,7 +4,7 @@ import Subscription from "@components/common/subscription";
 import ShopDiscount from "@components/shop/discount";
 import { ShopFilters } from "@components/shop/filters";
 import StickyBox from "react-sticky-box";
-import { ProductGrid } from "@components/product/product-grid";
+import MockProductGrid from "@components/product/mock-product-grid";
 import SearchTopBar from "@components/shop/top-bar";
 import ActiveLink from "@components/ui/active-link";
 import { BreadcrumbItems } from "@components/common/breadcrumb";
@@ -46,7 +46,7 @@ export default function Shop() {
 
           <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
             <SearchTopBar />
-            <ProductGrid />
+            <MockProductGrid />
           </div>
         </div>
         <Subscription />

@@ -42,34 +42,32 @@ export default function Home() {
           sectionHeading="text-featured-products"
           categorySlug="/search"
         /> */}
-
         {/* Deal of the Day Section */}
-
         {/* Featured Experiences Section */}
         <FeaturedExperiences
           sectionHeading="Featured Experiences"
           className="mb-12"
         />
-
-        <BannerCard
+        {/* <BannerCard
           key={`banner--key${banner[1].id}`}
           banner={banner[1]}
           href={`${ROUTES.COLLECTIONS}/${banner[1].slug}`}
           className="mb-12 lg:mb-14 xl:mb-16 pb-0.5 lg:pb-1 xl:pb-0"
-        />
+        /> */}
         {/* Featured Gift Cards Section */}
-        <FeaturedGiftCards
+        {/* <FeaturedGiftCards
           sectionHeading="Featured Gift Cards"
           className="mb-12"
-        />
-
+        /> */}
+        {/* 
         <BannerCard
           key={`banner--key${banner[0].id}`}
           banner={banner[0]}
           href={`${ROUTES.COLLECTIONS}/${banner[0].slug}`}
           className="mb-12 lg:mb-14 xl:mb-16 pb-0.5 lg:pb-1 xl:pb-0"
-        />
-        <DealOfTheDay sectionHeading="Deal of the day" className="mb-12" />
+        /> */}
+        {/* <DealOfTheDay sectionHeading="Deal of the day" className="mb-12" /> */}
+        {/* ---------------------------- */}
         {/* <BrandGridBlock sectionHeading="text-top-brands" /> */}
         {/* <BannerWithProducts
           sectionHeading="text-on-selling-products"

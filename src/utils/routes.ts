@@ -22,4 +22,6 @@ export const ROUTES = {
   EXPERIENCES: "/experiences",
   SHOPPING: "/shopping",
   DEALS: "/deals",
+  WISHLIST: "/wishlist",
+  FEATURED_PRODUCTS: "/featured-products",
 };

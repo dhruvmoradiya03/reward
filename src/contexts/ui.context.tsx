@@ -98,7 +98,8 @@ type MODAL_VIEWS =
   | "SIGN_UP_VIEW"
   | "LOGIN_VIEW"
   | "FORGET_PASSWORD"
-  | "PRODUCT_VIEW";
+  | "PRODUCT_VIEW"
+  | "FEATURED_PRODUCT_VIEW";
 type DRAWER_VIEWS = "CART_SIDEBAR" | "MOBILE_MENU";
 type ToastText = string;
 
