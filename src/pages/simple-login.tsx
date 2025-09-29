@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useTenantConfig } from "../hooks/use-tenant-config";
 import Input from "@components/ui/input";
@@ -8,11 +8,10 @@ import { useForm } from "react-hook-form";
 import { useLoginMutation, LoginInputType } from "@framework/auth/use-login";
 import { useUI } from "@contexts/ui.context";
 import Logo from "@components/ui/logo";
-import ClientOnly from "@components/common/client-only";
 
-const SignInPage: React.FC = () => {
+const SimpleLogin: React.FC = () => {
   const router = useRouter();
-  const { setModalView, openModal } = useUI();
+  const { setModalView, openModal, closeModal } = useUI();
   const { mutate: login, isPending } = useLoginMutation();
   const { currentTenant, theme } = useTenantConfig();
 
@@ -21,37 +20,12 @@ const SignInPage: React.FC = () => {
   );
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [subdomain, setSubdomain] = useState<string>("demo");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInputType>();
-
-  // Detect subdomain on client-side
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname.includes("127.0.0.1")) {
-        // For localhost, check if there's a subdomain
-        const parts = hostname.split(".");
-        if (parts.length > 1) {
-          setSubdomain(parts[0]);
-        } else {
-          setSubdomain("demo");
-        }
-      } else {
-        // For production
-        const parts = hostname.split(".");
-        if (parts.length >= 3) {
-          setSubdomain(parts[0]);
-        } else {
-          setSubdomain("demo");
-        }
-      }
-    }
-  }, []);
 
   function onSubmit({ email, password, remember_me }: LoginInputType) {
     if (loginMethod === "otp") {
@@ -99,44 +73,30 @@ const SignInPage: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div
-            className="mx-auto h-16 w-16 flex items-center justify-center rounded-full mb-4"
-            style={{ backgroundColor: theme?.primaryColor || "#3b82f6" }}
-          >
-            <Logo className="h-8 w-8 text-white" />
-          </div>
+          <Logo className="mx-auto h-12 w-auto" />
           <h2
-            className="text-3xl font-bold"
+            className="mt-6 text-3xl font-extrabold"
             style={{ color: theme?.textColor || "#111827" }}
           >
-            Welcome Back
+            Sign in to your account
           </h2>
           <p
             className="mt-2 text-sm"
             style={{ color: theme?.textSecondaryColor || "#6b7280" }}
           >
-            Sign in to {currentTenant?.name || "your rewards account"}
+            Welcome to {currentTenant?.name || "Rewards Platform"}
           </p>
-
-          {/* Subdomain Info */}
-          <ClientOnly fallback={<div className="h-4"></div>}>
-            <div className="mt-2 px-3 py-1 bg-blue-50 rounded-full inline-block">
-              <span className="text-xs font-medium text-blue-700">
-                Client: {subdomain}.rewargenix.com
-              </span>
-            </div>
-          </ClientOnly>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white py-8 px-6 shadow-xl rounded-2xl border border-gray-100">
+        <div className="bg-white py-8 px-6 shadow-lg rounded-lg">
           {/* Login Method Tabs */}
-          <div className="mb-8">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-xl">
+          <div className="mb-6">
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
               <button
                 type="button"
                 onClick={() => setLoginMethod("password")}
-                className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
+                className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
                   loginMethod === "password"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -147,7 +107,7 @@ const SignInPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setLoginMethod("otp")}
-                className={`flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
+                className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
                   loginMethod === "otp"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
@@ -166,7 +126,6 @@ const SignInPage: React.FC = () => {
                   label="Email address"
                   type="email"
                   autoComplete="email"
-                  placeholder="Enter your email"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -182,7 +141,6 @@ const SignInPage: React.FC = () => {
                 <PasswordInput
                   label="Password"
                   autoComplete="current-password"
-                  placeholder="Enter your password"
                   {...register("password", {
                     required: "Password is required",
                     minLength: {
@@ -199,10 +157,7 @@ const SignInPage: React.FC = () => {
                   <input
                     type="checkbox"
                     {...register("remember_me")}
-                    className="h-4 w-4 rounded border-gray-300"
-                    style={{
-                      accentColor: theme?.primaryColor || "#3b82f6",
-                    }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <span className="ml-2 text-sm text-gray-600">
                     Remember me
@@ -211,7 +166,7 @@ const SignInPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleForgetPassword}
-                  className="text-sm font-medium hover:underline"
+                  className="text-sm font-medium"
                   style={{ color: theme?.primaryColor || "#3b82f6" }}
                 >
                   Forgot password?
@@ -222,13 +177,13 @@ const SignInPage: React.FC = () => {
                 <Button
                   type="submit"
                   loading={isPending}
-                  className="w-full py-3 text-base font-medium"
+                  className="w-full"
                   style={{
                     backgroundColor: theme?.primaryColor || "#3b82f6",
                     color: "white",
                   }}
                 >
-                  {isPending ? "Signing in..." : "Sign in"}
+                  Sign in
                 </Button>
               </div>
             </form>
@@ -242,7 +197,6 @@ const SignInPage: React.FC = () => {
                   label="Email address"
                   type="email"
                   autoComplete="email"
-                  placeholder="Enter your email"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -264,11 +218,8 @@ const SignInPage: React.FC = () => {
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter 6-digit OTP"
                     maxLength={6}
-                    className="text-center text-lg tracking-widest font-mono"
+                    className="text-center text-lg tracking-widest"
                   />
-                  <p className="mt-2 text-sm text-gray-600">
-                    We've sent a 6-digit code to your email
-                  </p>
                 </div>
               )}
 
@@ -276,17 +227,13 @@ const SignInPage: React.FC = () => {
                 <Button
                   type="submit"
                   loading={isPending}
-                  className="w-full py-3 text-base font-medium"
+                  className="w-full"
                   style={{
                     backgroundColor: theme?.primaryColor || "#3b82f6",
                     color: "white",
                   }}
                 >
-                  {isPending
-                    ? "Processing..."
-                    : otpSent
-                    ? "Verify OTP"
-                    : "Send OTP"}
+                  {otpSent ? "Verify OTP" : "Send OTP"}
                 </Button>
               </div>
 
@@ -295,7 +242,7 @@ const SignInPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setOtpSent(false)}
-                    className="text-sm font-medium hover:underline"
+                    className="text-sm"
                     style={{ color: theme?.primaryColor || "#3b82f6" }}
                   >
                     Change email
@@ -306,13 +253,13 @@ const SignInPage: React.FC = () => {
           )}
 
           {/* Sign Up Link */}
-          <div className="mt-8 text-center">
+          <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
               <button
                 type="button"
                 onClick={handleSignUp}
-                className="font-medium hover:underline"
+                className="font-medium"
                 style={{ color: theme?.primaryColor || "#3b82f6" }}
               >
                 Sign up
@@ -335,4 +282,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
+export default SimpleLogin;

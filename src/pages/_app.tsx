@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
 import { ManagedUIContext } from "@contexts/ui.context";
+import { TenantProvider } from "@contexts/tenant.context";
 import ManagedModal from "@components/common/modal/managed-modal";
 import ManagedDrawer from "@components/common/drawer/managed-drawer";
 import { useEffect, useRef } from "react";
@@ -60,15 +61,17 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
         {/* @ts-ignore */}
         <HydrationBoundary state={pageProps.dehydratedState}>
           {/* @ts-ignore */}
-          <ManagedUIContext>
-            <Layout pageProps={pageProps}>
-              <DefaultSeo />
-              <Component {...pageProps} key={router.route} />
-              <ToastContainer toastClassName="!text-white" />
-            </Layout>
-            <ManagedModal />
-            <ManagedDrawer />
-          </ManagedUIContext>
+          <TenantProvider>
+            <ManagedUIContext>
+              <Layout pageProps={pageProps}>
+                <DefaultSeo />
+                <Component {...pageProps} key={router.route} />
+                <ToastContainer toastClassName="!text-white" />
+              </Layout>
+              <ManagedModal />
+              <ManagedDrawer />
+            </ManagedUIContext>
+          </TenantProvider>
         </HydrationBoundary>
         {/* <ReactQueryDevtools /> */}
       </QueryClientProvider>

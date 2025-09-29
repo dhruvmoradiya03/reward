@@ -4,6 +4,7 @@ import ArrowLeftIcon from "@components/icons/arrow-left-icon";
 import SearchIcon from "@components/icons/search-icon";
 import CartIcon from "@components/icons/cart-icon";
 import { useCart } from "@contexts/cart/cart.context";
+import ClientOnly from "@components/common/client-only";
 
 const WishlistHeader: React.FC = () => {
   const router = useRouter();
@@ -14,7 +15,6 @@ const WishlistHeader: React.FC = () => {
       {/* Mobile Header */}
       <div className="lg:hidden">
         {/* Status Bar */}
-        
 
         {/* Main Header */}
         <div className="px-4 py-3">
@@ -26,9 +26,9 @@ const WishlistHeader: React.FC = () => {
             >
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
-            
+
             <h1 className="text-lg font-semibold text-gray-900">Wishlist</h1>
-            
+
             <div className="w-9"></div>
           </div>
 
@@ -75,13 +75,17 @@ const WishlistHeader: React.FC = () => {
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <CartIcon className="w-6 h-6" />
-                  {totalItems > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                      {totalItems}
-                    </span>
-                  )}
+                  <ClientOnly fallback={null}>
+                    {totalItems > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {totalItems}
+                      </span>
+                    )}
+                  </ClientOnly>
                 </div>
-                <span className="text-sm font-medium text-gray-700">20,000 ></span>
+                <span className="text-sm font-medium text-gray-700">
+                  20,000 &gt;
+                </span>
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   SB
                 </div>

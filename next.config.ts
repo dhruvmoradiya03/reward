@@ -17,7 +17,19 @@ export default withPWA({
     domains: [
       'riddio-media.s3.us-east-1.amazonaws.com',
       'localhost',
+      'hdfc.localhost',
+      'axis.localhost',
+      'icici.localhost',
       'i.dummyjson.com',
     ],
+  },
+  // Enable subdomain routing
+  async rewrites() {
+    return [
+      {
+        source: '/:path*',
+        destination: '/:path*',
+      },
+    ];
   },
 });

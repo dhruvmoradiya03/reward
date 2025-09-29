@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useTenantConfig } from "../hooks/use-tenant-config";
 import Input from "@components/ui/input";
@@ -8,9 +8,8 @@ import { useForm } from "react-hook-form";
 import { useLoginMutation, LoginInputType } from "@framework/auth/use-login";
 import { useUI } from "@contexts/ui.context";
 import Logo from "@components/ui/logo";
-import ClientOnly from "@components/common/client-only";
 
-const SignInPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const router = useRouter();
   const { setModalView, openModal } = useUI();
   const { mutate: login, isPending } = useLoginMutation();
@@ -21,37 +20,12 @@ const SignInPage: React.FC = () => {
   );
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [subdomain, setSubdomain] = useState<string>("demo");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInputType>();
-
-  // Detect subdomain on client-side
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hostname = window.location.hostname;
-      if (hostname === "localhost" || hostname.includes("127.0.0.1")) {
-        // For localhost, check if there's a subdomain
-        const parts = hostname.split(".");
-        if (parts.length > 1) {
-          setSubdomain(parts[0]);
-        } else {
-          setSubdomain("demo");
-        }
-      } else {
-        // For production
-        const parts = hostname.split(".");
-        if (parts.length >= 3) {
-          setSubdomain(parts[0]);
-        } else {
-          setSubdomain("demo");
-        }
-      }
-    }
-  }, []);
 
   function onSubmit({ email, password, remember_me }: LoginInputType) {
     if (loginMethod === "otp") {
@@ -117,15 +91,6 @@ const SignInPage: React.FC = () => {
           >
             Sign in to {currentTenant?.name || "your rewards account"}
           </p>
-
-          {/* Subdomain Info */}
-          <ClientOnly fallback={<div className="h-4"></div>}>
-            <div className="mt-2 px-3 py-1 bg-blue-50 rounded-full inline-block">
-              <span className="text-xs font-medium text-blue-700">
-                Client: {subdomain}.rewargenix.com
-              </span>
-            </div>
-          </ClientOnly>
         </div>
 
         {/* Login Form */}
@@ -335,4 +300,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
+export default LoginPage;

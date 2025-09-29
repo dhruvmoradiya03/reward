@@ -17,7 +17,7 @@ export interface State {
 }
 
 const initialState = {
-  isAuthorized: getToken() ? true : false,
+  isAuthorized: false, // Always start as false for SSR safety
   displaySidebar: false,
   displayFilter: false,
   displayModal: false,
@@ -230,6 +230,14 @@ function uiReducer(state: State, action: Action) {
 
 export const UIProvider: React.FC = (props) => {
   const [state, dispatch] = React.useReducer(uiReducer, initialState);
+
+  // Check for existing token on client-side mount
+  React.useEffect(() => {
+    const token = getToken();
+    if (token) {
+      dispatch({ type: "SET_AUTHORIZED" });
+    }
+  }, []);
 
   const authorize = () => dispatch({ type: "SET_AUTHORIZED" });
   const unauthorize = () => dispatch({ type: "SET_UNAUTHORIZED" });

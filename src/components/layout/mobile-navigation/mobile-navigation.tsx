@@ -12,6 +12,7 @@ import { Drawer } from "@components/common/drawer/drawer";
 import { getDirection } from "@utils/get-direction";
 import motionProps from "@components/common/drawer/motion";
 import { useCart } from "@contexts/cart/cart.context";
+import ClientOnly from "@components/common/client-only";
 
 const MobileMenu = dynamic(
   () => import("@components/layout/header/mobile-menu")
@@ -100,11 +101,13 @@ const BottomNavigation: React.FC = () => {
           aria-label="cart-button"
         >
           <CartIcon />
-          {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-              {totalItems}
-            </span>
-          )}
+          <ClientOnly fallback={null}>
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                {totalItems}
+              </span>
+            )}
+          </ClientOnly>
           <span className="text-xs mt-1 font-medium">Cart</span>
         </button>
 
