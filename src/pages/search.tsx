@@ -12,12 +12,17 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { ROUTES } from "@utils/routes";
 import { useTranslation } from "next-i18next";
 import { GetStaticProps } from "next";
+import { NextSeo } from "next-seo";
 
 export default function Shop() {
   const { t } = useTranslation("common");
 
   return (
     <>
+      <NextSeo
+        title="Search Products"
+        description="Search and filter products"
+      />
       <ShopDiscount />
       <Container>
         <div className={`flex pt-8 pb-16 lg:pb-20`}>

@@ -8,7 +8,7 @@ import { Product } from "@framework/types";
 // import ProductIcon2 from '../../../public/assets/images/products/icons/product-icon2.svg'
 // import ProductIcon3 from '../../../public/assets/images/products/icons/product-icon3.svg'
 import ProductViewIcon from "@components/icons/product-view-icon";
-import ProductWishIcon from "@components/icons/product-wish-icon";
+import WishlistButton from "@components/ui/wishlist-button";
 // import ProductCompareIcon from "@components/icons/product-compare-icon";
 import RatingDisplay from "@components/common/rating-display";
 
@@ -68,6 +68,11 @@ const ProductCard: FC<ProductProps> = ({
     setModalView("PRODUCT_VIEW");
     return openModal();
   }
+
+  const handleWishlistToggle = (productId: string, isFavorited: boolean) => {
+    // TODO: Implement wishlist toggle functionality
+    console.log(`Wishlist ${isFavorited ? "added" : "removed"}:`, productId);
+  };
 
   return (
     <div
@@ -176,7 +181,11 @@ const ProductCard: FC<ProductProps> = ({
         {variant === "gridModernWide" && (
           <div className="absolute ltr:right-2 rtl:left-2 ltr:sm:right-3 rtl:sm:left-3 top-2 space-y-2">
             <ProductViewIcon className="w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] lg:w-[36px] lg:h-[36px] transition duration-300 ease-in delay-100 bg-white rounded-full shadow-md opacity-100 p-1" />
-            <ProductWishIcon className="w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] lg:w-[36px] lg:h-[36px] transition duration-300 ease-in delay-200 bg-white rounded-full shadow-md opacity-100 p-1" />
+            <WishlistButton
+              productId={product.id}
+              onToggle={handleWishlistToggle}
+              size="lg"
+            />
             {/* <ProductCompareIcon className="w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] lg:w-[36px] lg:h-[36px] transition duration-300 ease-in delay-300 bg-white rounded-full shadow-md opacity-100 p-1" /> */}
           </div>
         )}
@@ -298,7 +307,11 @@ const ProductCard: FC<ProductProps> = ({
 
       {(variant === "gridTrendy" || variant === "gridModern") && (
         <div className="absolute flex ltr:right-2 rtl:left-2 top-2 gap-x-2">
-          <ProductWishIcon className="transition ease-in duration-300 opacity-100 delay-200 w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] lg:w-[40px] lg:h-[40px] bg-white rounded-full shadow-md" />
+          <WishlistButton
+            productId={product.id}
+            onToggle={handleWishlistToggle}
+            size="lg"
+          />
           {/* <ProductCompareIcon className="transition ease-in duration-300 opacity-100 delay-300 w-[28px] h-[28px] sm:w-[32px] sm:h-[32px] lg:w-[36px] lg:h-[36px] bg-white rounded-full shadow-md p-1" /> */}
         </div>
       )}

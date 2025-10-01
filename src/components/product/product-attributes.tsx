@@ -1,4 +1,4 @@
-import cn from 'classnames';
+import cn from "classnames";
 interface Props {
   className?: string;
   title: string;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const ProductAttributes: React.FC<Props> = ({
-  className = 'mb-4',
+  className = "mb-4",
   title,
   attributes,
   active,
@@ -28,12 +28,12 @@ export const ProductAttributes: React.FC<Props> = ({
           <li
             key={`${value}-${id}`}
             className={cn(
-              'cursor-pointer rounded border  w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black',
-              value === active ? 'border-black' : 'border-gray-100'
+              "cursor-pointer rounded border  w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+              value === active ? "border-black" : "border-gray-100"
             )}
             onClick={() => onClick({ [title]: value })}
           >
-            {title === 'color' ? (
+            {title === "color" ? (
               <span
                 className="block w-full h-full rounded"
                 style={{ backgroundColor: meta }}

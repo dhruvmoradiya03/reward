@@ -64,7 +64,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
           },
         },
         theme: {
-          primaryColor: "#3B82F6",
+          primaryColor: "#1A60E3",
           secondaryColor: "#10B981",
           accentColor: "#F59E0B",
           backgroundColor: "#FFFFFF",
@@ -159,7 +159,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
           },
         },
         theme: {
-          primaryColor: "#E30613", // HDFC Red
+          primaryColor: "#1A60E3", // HDFC Red
           secondaryColor: "#1E40AF",
           accentColor: "#F59E0B",
           backgroundColor: "#FFFFFF",
@@ -249,7 +249,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
           },
         },
         theme: {
-          primaryColor: "#FF6B35", // AXIS Orange
+          primaryColor: "#1A60E3", // AXIS Orange
           secondaryColor: "#1E40AF",
           accentColor: "#F59E0B",
           backgroundColor: "#FFFFFF",
@@ -339,7 +339,7 @@ export const TenantProvider: React.FC<TenantProviderProps> = ({ children }) => {
           },
         },
         theme: {
-          primaryColor: "#FF6B00", // ICICI Orange
+          primaryColor: "#1A60E3", // ICICI Orange
           secondaryColor: "#1E40AF",
           accentColor: "#F59E0B",
           backgroundColor: "#FFFFFF",

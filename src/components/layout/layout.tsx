@@ -9,6 +9,7 @@ import Button from "@components/ui/button";
 import { useTranslation } from "next-i18next";
 import { TenantProvider } from "@contexts/tenant.context";
 import { useTheme } from "../../hooks/use-theme";
+import ManagedModal from "@components/common/modal/managed-modal";
 
 function LayoutContent({ children }: React.PropsWithChildren<{}>) {
   const { acceptedCookies, onAcceptCookies } = useAcceptCookies();
@@ -60,7 +61,8 @@ function LayoutContent({ children }: React.PropsWithChildren<{}>) {
       </main>
       <Footer />
       <MobileNavigation />
-      <Search />
+      {/* <Search /> */}
+      <ManagedModal />
       <CookieBar
         title={t("text-cookies-title")}
         hide={acceptedCookies}

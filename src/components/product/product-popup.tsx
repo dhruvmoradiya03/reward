@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import isEmpty from "lodash/isEmpty";
-import { ROUTES } from "@utils/routes";
 import { useUI } from "@contexts/ui.context";
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
@@ -11,8 +10,9 @@ import { generateCartItem } from "@utils/generate-cart-item";
 import usePrice from "@framework/product/use-price";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
+import { useTenantConfig } from "../../hooks/use-tenant-config";
 
-export default function ProductPopup() {
+const ProductPopup: React.FC = () => {
   const { t } = useTranslation("common");
   const {
     modalData: { data },
@@ -21,17 +21,56 @@ export default function ProductPopup() {
   } = useUI();
   const router = useRouter();
   const { addItemToCart } = useCart();
+  const { theme } = useTenantConfig();
   const [quantity, setQuantity] = useState(1);
   const [attributes, setAttributes] = useState<{ [key: string]: string }>({});
   const [viewCartBtn, setViewCartBtn] = useState<boolean>(false);
   const [addToCartLoader, setAddToCartLoader] = useState<boolean>(false);
+
+  if (!data) {
+    return null;
+  }
+
+  // Transform attributes to the format expected by ProductAttributes
+  const transformedAttributes: { [key: string]: any } = {};
+  if (data.attributes) {
+    Object.keys(data.attributes).forEach((key) => {
+      const [value, meta] = data.attributes[key];
+      transformedAttributes[key] = [
+        {
+          id: 1,
+          value: value,
+          meta: meta || value,
+        },
+      ];
+    });
+  }
+
+  // Map featured product data to template format
+  const mappedProduct = {
+    id: data.id,
+    slug: data.id,
+    name: data.product_name,
+    description: data.description.replace(/<[^>]*>/g, ""),
+    image: {
+      original: data.product_thumbnail,
+      thumbnail: data.product_thumbnail,
+    },
+    price: parseFloat(data.face_value_mrp),
+    sale_price: parseFloat(data.cost_price_withtax),
+    variations: transformedAttributes,
+  };
+
   const { price, basePrice, discount } = usePrice({
-    amount: data.sale_price ? data.sale_price : data.price,
-    baseAmount: data.price,
+    amount: mappedProduct.sale_price
+      ? mappedProduct.sale_price
+      : mappedProduct.price,
+    baseAmount: mappedProduct.price,
     currencyCode: "USD",
   });
-  const variations = getVariations(data.variations);
-  const { slug, image, name, description } = data;
+
+  const variations = getVariations(mappedProduct.variations);
+  const { slug, image, name, description } = mappedProduct;
 
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
@@ -41,21 +80,40 @@ export default function ProductPopup() {
     : true;
 
   function addToCart() {
-    if (!isSelected) return;
+    if (!isSelected) {
+      console.log("Product not selected - missing attributes");
+      return;
+    }
+
+    console.log("Adding to cart:", {
+      product: mappedProduct,
+      attributes,
+      quantity,
+    });
+
     // to show btn feedback while product carting
     setAddToCartLoader(true);
-    setTimeout(() => {
+
+    try {
+      const item = generateCartItem(mappedProduct, attributes);
+      console.log("Generated cart item:", item);
+
+      addItemToCart(item, quantity);
+      console.log("Successfully added to cart");
+
+      setTimeout(() => {
+        setAddToCartLoader(false);
+        setViewCartBtn(true);
+      }, 600);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
       setAddToCartLoader(false);
-      setViewCartBtn(true);
-    }, 600);
-    const item = generateCartItem(data!, attributes);
-    addItemToCart(item, quantity);
-    console.log(item, "item");
+    }
   }
 
   function navigateToProductPage() {
     closeModal();
-    router.push(`${ROUTES.PRODUCT}/${slug}`, undefined, {
+    router.push(`/product/${slug}`, undefined, {
       locale: router.locale,
     });
   }
@@ -72,6 +130,34 @@ export default function ProductPopup() {
     setTimeout(() => {
       openCart();
     }, 300);
+  }
+
+  function buyNow() {
+    if (!isSelected) {
+      console.log("Product not selected - missing attributes");
+      return;
+    }
+
+    console.log("Buy now:", {
+      product: mappedProduct,
+      attributes,
+      quantity,
+    });
+
+    // Add to cart first
+    try {
+      const item = generateCartItem(mappedProduct, attributes);
+      addItemToCart(item, quantity);
+      console.log("Added to cart for buy now");
+
+      // Close modal and navigate to cart
+      closeModal();
+      setTimeout(() => {
+        openCart();
+      }, 300);
+    } catch (error) {
+      console.error("Error in buy now:", error);
+    }
   }
 
   return (
@@ -91,12 +177,8 @@ export default function ProductPopup() {
 
         <div className="flex flex-col p-5 md:p-8 w-full">
           <div className="pb-5">
-            <div
-              className="mb-2 md:mb-2.5 block -mt-1.5"
-              onClick={navigateToProductPage}
-              role="button"
-            >
-              <h2 className="text-heading text-lg md:text-xl lg:text-2xl font-semibold hover:text-black">
+            <div className="mb-2 md:mb-2.5 block -mt-1.5">
+              <h2 className="text-heading text-lg md:text-xl lg:text-2xl font-semibold">
                 {name}
               </h2>
             </div>
@@ -141,11 +223,17 @@ export default function ProductPopup() {
               <Button
                 onClick={addToCart}
                 variant="flat"
-                className={`w-full h-11 md:h-12 px-1.5 ${
+                className={`w-full h-11 md:h-12 px-1.5 border-2 ${
                   !isSelected && "bg-gray-400 hover:bg-gray-400"
                 }`}
                 disabled={!isSelected}
                 loading={addToCartLoader}
+                type="button"
+                style={{
+                  borderColor: theme?.primaryColor || "#1A60E3",
+                  color: theme?.primaryColor || "#1A60E3",
+                  backgroundColor: "transparent",
+                }}
               >
                 {t("text-add-to-cart")}
               </Button>
@@ -154,22 +242,43 @@ export default function ProductPopup() {
             {viewCartBtn && (
               <button
                 onClick={navigateToCartPage}
+                type="button"
                 className="w-full mb-4 h-11 md:h-12 rounded bg-gray-100 text-heading focus:outline-none border border-gray-300 transition-colors hover:bg-gray-50 focus:bg-gray-50"
               >
                 {t("text-view-cart")}
               </button>
             )}
 
-            <Button
-              onClick={navigateToProductPage}
-              variant="flat"
-              className="w-full h-11 md:h-12"
-            >
-              {t("text-view-details")}
-            </Button>
+            <div className="flex gap-3 mb-4">
+              <Button
+                onClick={buyNow}
+                variant="slim"
+                className={`flex-1 h-11 md:h-12 ${
+                  !isSelected && "bg-gray-400 hover:bg-gray-400"
+                }`}
+                disabled={!isSelected}
+                type="button"
+                style={{
+                  backgroundColor: theme?.primaryColor || "#1A60E3",
+                  borderColor: theme?.primaryColor || "#1A60E3",
+                }}
+              >
+                {t("text-buy-now")}
+              </Button>
+              <Button
+                onClick={navigateToProductPage}
+                variant="flat"
+                className="flex-1 h-11 md:h-12"
+                type="button"
+              >
+                {t("text-view-details")}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ProductPopup;

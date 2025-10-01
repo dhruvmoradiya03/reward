@@ -1,10 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import Link from "@components/ui/link";
 import { useRouter } from "next/router";
 import { useUI } from "@contexts/ui.context";
-import ProductWishIcon from "@components/icons/product-wish-icon";
 import ProductViewIcon from "@components/icons/product-view-icon";
+import WishlistButton from "@components/ui/wishlist-button";
 
 interface FeaturedProduct {
   id: string;
@@ -40,20 +39,19 @@ const FeaturedProductCard: React.FC<FeaturedProductCardProps> = ({
   const router = useRouter();
 
   const handleProductClick = () => {
-    router.push(`/product/${product.id}`);
+    setModalData({ data: product });
+    setModalView("PRODUCT_VIEW");
+    return openModal();
   };
 
   const handlePopupView = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setModalData({ data: product });
-    setModalView("FEATURED_PRODUCT_VIEW");
-    return openModal();
+    router.push(`/product/${product.id}`);
   };
 
-  const handleWishlistToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleWishlistToggle = (productId: string, isFavorited: boolean) => {
     // TODO: Implement wishlist toggle functionality
-    console.log("Toggle wishlist:", product.id);
+    console.log(`Wishlist ${isFavorited ? "added" : "removed"}:`, productId);
   };
 
   const discountPercentage = Math.round(
@@ -94,13 +92,11 @@ const FeaturedProductCard: React.FC<FeaturedProductCardProps> = ({
 
         {/* Action Buttons */}
         <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            onClick={handleWishlistToggle}
-            className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-            aria-label="Add to wishlist"
-          >
-            <ProductWishIcon className="w-4 h-4" />
-          </button>
+          <WishlistButton
+            productId={product.id}
+            onToggle={handleWishlistToggle}
+            size="md"
+          />
           <button
             onClick={handlePopupView}
             className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"

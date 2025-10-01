@@ -19,7 +19,8 @@ const MobileMenu = dynamic(
 );
 
 const BottomNavigation: React.FC = () => {
-  const { openSidebar, closeSidebar, displaySidebar, openSearch } = useUI();
+  const { openSidebar, closeSidebar, displaySidebar, openSearch, openCart } =
+    useUI();
 
   const { totalItems } = useCart();
   const router = useRouter();
@@ -91,10 +92,7 @@ const BottomNavigation: React.FC = () => {
 
         {/* Cart */}
         <button
-          onClick={() => {
-            // TODO: Implement cart open functionality
-            console.log("Cart clicked");
-          }}
+          onClick={openCart}
           className={`flex flex-col items-center justify-center flex-shrink-0 relative ${
             isActive("/cart") ? "text-blue-600" : "text-gray-400"
           }`}

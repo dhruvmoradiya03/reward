@@ -13,6 +13,7 @@ const FeaturedProductPopup = dynamic(
 );
 const ManagedModal: React.FC = () => {
   const { displayModal, closeModal, modalView } = useUI();
+
   return (
     <Modal open={displayModal} onClose={closeModal}>
       {modalView === "LOGIN_VIEW" && <LoginForm />}

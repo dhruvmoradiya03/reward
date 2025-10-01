@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { GiftCard } from "../../data/gift-cards-data";
-import WishIcon from "@components/icons/wish-icon";
+import WishlistButton from "@components/ui/wishlist-button";
 import ConditionalPricing from "../pricing/conditional-pricing";
 
 interface GiftCardItemProps {
@@ -13,10 +13,8 @@ const GiftCardItem: React.FC<GiftCardItemProps> = ({
   giftCard,
   onToggleFavorite,
 }) => {
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onToggleFavorite(giftCard.id);
+  const handleToggleFavorite = (productId: string, isFavorited: boolean) => {
+    onToggleFavorite(productId);
   };
 
   return (
@@ -29,19 +27,14 @@ const GiftCardItem: React.FC<GiftCardItemProps> = ({
         </div>
 
         {/* Favorite Button */}
-        <button
-          onClick={handleToggleFavorite}
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-200"
-          aria-label="Toggle favorite"
-        >
-          <WishIcon
-            className={`w-4 h-4 ${
-              giftCard.isFavorite
-                ? "text-red-500"
-                : "text-gray-400 hover:text-red-500"
-            }`}
+        <div className="absolute top-2 right-2">
+          <WishlistButton
+            productId={giftCard.id}
+            isFavorited={giftCard.isFavorite}
+            onToggle={handleToggleFavorite}
+            size="sm"
           />
-        </button>
+        </div>
 
         {/* Brand Logo - Centered */}
         <div className="flex items-center justify-center h-20 mb-4">

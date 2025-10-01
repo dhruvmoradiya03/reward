@@ -1,17 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUI } from "@contexts/ui.context";
-import { useTranslation } from "next-i18next";
 import { IoClose } from "react-icons/io5";
 import Image from "next/image";
 import Button from "@components/ui/button";
-import ProductWishIcon from "@components/icons/product-wish-icon";
+import WishlistButton from "@components/ui/wishlist-button";
+import { useRouter } from "next/router";
+import { useCart } from "@contexts/cart/cart.context";
+import { generateCartItem } from "@utils/generate-cart-item";
+import { useTenantConfig } from "../../hooks/use-tenant-config";
 
 const FeaturedProductPopup: React.FC = () => {
-  const { t } = useTranslation("common");
-  const { closeModal, modalData } = useUI();
+  const { closeModal, modalData, openCart } = useUI();
+  const router = useRouter();
+  const { addItemToCart } = useCart();
+  const { theme } = useTenantConfig();
   const product = modalData?.data;
+  const [addToCartLoader, setAddToCartLoader] = useState(false);
 
-  if (!product) return null;
+  // Debug logging
+  console.log("FeaturedProductPopup - modalData:", modalData);
+  console.log("FeaturedProductPopup - product:", product);
+
+  if (!product) {
+    console.log("FeaturedProductPopup - No product data, returning null");
+    return null;
+  }
 
   const discountPercentage = Math.round(
     ((parseFloat(product.face_value_mrp) -
@@ -20,14 +33,60 @@ const FeaturedProductPopup: React.FC = () => {
       100
   );
 
-  const handleWishlistToggle = () => {
+  const handleWishlistToggle = (productId: string, isFavorited: boolean) => {
     // TODO: Implement wishlist toggle functionality
-    console.log("Toggle wishlist:", product.id);
+    console.log(`Wishlist ${isFavorited ? "added" : "removed"}:`, productId);
   };
 
   const handleAddToCart = () => {
-    // TODO: Implement add to cart functionality
-    console.log("Add to cart:", product.id);
+    console.log("Adding to cart:", product);
+
+    setAddToCartLoader(true);
+
+    try {
+      // Map product to the format expected by generateCartItem
+      const mappedProduct = {
+        id: product.id,
+        slug: product.id,
+        name: product.product_name,
+        description: product.description,
+        image: {
+          original: product.product_thumbnail,
+          thumbnail: product.product_thumbnail,
+        },
+        price: parseFloat(product.cost_price_withtax),
+        sale_price: parseFloat(product.cost_price_withtax),
+        variations: product.attributes,
+      };
+
+      const item = generateCartItem(mappedProduct, {});
+      console.log("Generated cart item:", item);
+
+      addItemToCart(item, 1);
+      console.log("Successfully added to cart");
+
+      setTimeout(() => {
+        setAddToCartLoader(false);
+      }, 600);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      setAddToCartLoader(false);
+    }
+  };
+
+  const handleBuyNow = () => {
+    // First add to cart
+    handleAddToCart();
+
+    // Then open cart
+    setTimeout(() => {
+      openCart();
+    }, 700);
+  };
+
+  const handleViewDetails = () => {
+    closeModal();
+    router.push(`/product/${product.id}`);
   };
 
   return (
@@ -56,19 +115,21 @@ const FeaturedProductPopup: React.FC = () => {
           {/* Additional Images */}
           {product.product_image && product.product_image.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
-              {product.product_image.slice(0, 4).map((image, index) => (
-                <div
-                  key={index}
-                  className="relative aspect-square overflow-hidden rounded"
-                >
-                  <Image
-                    src={image}
-                    alt={`${product.product_name} ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+              {product.product_image
+                .slice(0, 4)
+                .map((image: string, index: number) => (
+                  <div
+                    key={index}
+                    className="relative aspect-square overflow-hidden rounded"
+                  >
+                    <Image
+                      src={image}
+                      alt={`${product.product_name} ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
             </div>
           )}
         </div>
@@ -163,16 +224,46 @@ const FeaturedProductPopup: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
-            <Button onClick={handleAddToCart} className="flex-1">
+            <Button
+              onClick={handleAddToCart}
+              variant="flat"
+              className="flex-1 h-11 md:h-12 border-2"
+              loading={addToCartLoader}
+              disabled={addToCartLoader}
+              type="button"
+              style={{
+                borderColor: theme?.primaryColor || "#1A60E3",
+                color: theme?.primaryColor || "#1A60E3",
+                backgroundColor: "transparent",
+              }}
+            >
               Add to Cart
             </Button>
             <Button
-              onClick={handleWishlistToggle}
-              variant="outline"
-              className="px-4"
+              onClick={handleBuyNow}
+              variant="slim"
+              className="flex-1 h-11 md:h-12"
+              type="button"
+              style={{
+                backgroundColor: theme?.primaryColor || "#1A60E3",
+                borderColor: theme?.primaryColor || "#1A60E3",
+              }}
             >
-              <ProductWishIcon className="w-5 h-5" />
+              Buy Now
             </Button>
+            <Button
+              onClick={handleViewDetails}
+              variant="slim"
+              className="flex-1 h-11 md:h-12"
+              type="button"
+            >
+              View Details
+            </Button>
+            <WishlistButton
+              productId={product.id}
+              onToggle={handleWishlistToggle}
+              size="md"
+            />
           </div>
 
           {/* Store Link */}

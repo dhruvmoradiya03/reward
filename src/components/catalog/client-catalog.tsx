@@ -3,6 +3,7 @@ import { useTenantConfig } from "../../hooks/use-tenant-config";
 import { useUI } from "@contexts/ui.context";
 import ClientOnly from "@components/common/client-only";
 import Container from "@components/ui/container";
+import Link from "next/link";
 
 interface ClientCatalogProps {
   className?: string;
@@ -17,7 +18,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ className = "" }) => {
     const clientType = currentTenant?.clientConfig?.paymentConfig?.clientType;
 
     switch (clientType) {
-      case "Points Only":
+      case "only-points":
         return {
           title: "Points Redemption Catalog",
           description: "Redeem your points for amazing rewards",
@@ -49,7 +50,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ className = "" }) => {
           ],
         };
 
-      case "Pay Only":
+      case "only-pay":
         return {
           title: "Premium Products Catalog",
           description: "Shop with exclusive bank offers",
@@ -229,7 +230,7 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ className = "" }) => {
 
                 {/* Payment Options */}
                 <div className="space-y-2">
-                  {item.points && (
+                  {"points" in item && item.points && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Points:</span>
                       <span
@@ -241,14 +242,14 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ className = "" }) => {
                     </div>
                   )}
 
-                  {item.price && (
+                  {"price" in item && item.price && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Price:</span>
                       <div className="text-right">
                         <span className="font-semibold text-lg">
                           ₹{item.price.toLocaleString()}
                         </span>
-                        {item.discount && (
+                        {"discount" in item && item.discount && (
                           <span className="text-sm text-green-600 ml-2">
                             ({item.discount}% off)
                           </span>
@@ -262,15 +263,42 @@ const ClientCatalog: React.FC<ClientCatalogProps> = ({ className = "" }) => {
                   className="w-full mt-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: theme?.primaryColor || "#3b82f6" }}
                 >
-                  {item.points && item.price
+                  {"points" in item &&
+                  "price" in item &&
+                  item.points &&
+                  item.price
                     ? "Choose Option"
-                    : item.points
+                    : "points" in item && item.points
                     ? "Redeem Points"
                     : "Buy Now"}
                 </button>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* See All Products Link */}
+        <div className="text-center mt-8">
+          <Link
+            href="/featured-products-search"
+            className="inline-flex items-center px-6 py-3 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+            style={{ backgroundColor: theme?.primaryColor || "#3b82f6" }}
+          >
+            See All Products
+            <svg
+              className="ml-2 w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
         </div>
       </Container>
     </ClientOnly>
