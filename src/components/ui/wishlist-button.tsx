@@ -38,15 +38,15 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
 
   // Size classes
   const sizeClasses = {
-    sm: "w-6 h-6",
+    sm: "w-4 h-4",
     md: "w-8 h-8 sm:w-9 sm:h-9",
-    lg: "w-10 h-10 sm:w-12 sm:h-12",
+    lg: "w-8 h-8 sm:w-10 sm:h-10",
   };
 
   const iconSizeClasses = {
-    sm: "w-3 h-3",
+    sm: "w-2 h-2",
     md: "w-4 h-4 sm:w-5 sm:h-5",
-    lg: "w-5 h-5 sm:w-6 sm:h-6",
+    lg: "w-4 h-4 sm:w-5 sm:h-5",
   };
 
   return (

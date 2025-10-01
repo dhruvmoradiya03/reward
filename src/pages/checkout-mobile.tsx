@@ -5,16 +5,16 @@ import { GetStaticProps } from "next";
 import { useCart } from "@contexts/cart/cart.context";
 import Link from "next/link";
 import { HiOutlineEnvelope, HiOutlinePhone } from "react-icons/hi2";
-import { HiOutlineEye } from "react-icons/hi";
 import AddressSelectionModal from "@components/checkout/address-selection-modal";
 import AddAddressModal from "@components/checkout/add-address-modal";
 import EditAddressModal from "@components/checkout/edit-address-modal";
-import { useTenantConfig } from "@hooks/use-tenant-config";
+import { useTenantConfig } from "../hooks/use-tenant-config";
 
 interface CheckoutMobileProps {}
 
 const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
-  const { items, total, isEmpty, removeItemFromCart } = useCart();
+  const { items, total, isEmpty, removeItemFromCart, updateItemQuantity } =
+    useCart();
   const { theme } = useTenantConfig();
   const [promoCode, setPromoCode] = useState("");
   const [email, setEmail] = useState("abode@xyz.com");
@@ -40,8 +40,7 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
     if (newQuantity <= 0) {
       removeItemFromCart(itemId);
     } else {
-      // Update quantity logic would go here
-      console.log(`Update quantity for ${itemId} to ${newQuantity}`);
+      updateItemQuantity(itemId, newQuantity);
     }
   };
 
@@ -71,7 +70,6 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
   const handleSaveAddress = (newAddress: any) => {
     console.log("New address saved:", newAddress);
-    // Here you would typically save to your backend
     setAddress(
       `${newAddress.streetName}, ${newAddress.city}, ${newAddress.state}`
     );
@@ -86,7 +84,6 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
   const handleSaveEditedAddress = (editedAddress: any) => {
     console.log("Address edited:", editedAddress);
-    // Here you would typically update the address in your backend
     setAddress(
       `${editedAddress.streetName}, ${editedAddress.city}, ${editedAddress.state}`
     );
@@ -96,9 +93,9 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
   if (isEmpty) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Your cart is empty
           </h1>
           <Link href="/" className="text-blue-600 hover:text-blue-800">
@@ -114,7 +111,31 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
       <NextSeo title="Checkout" description="Complete your purchase" />
 
       <div className="min-h-screen bg-gray-50">
-        {/* Use common header from layout - no custom header */}
+        {/* Mobile Header */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => window.history.back()}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <h1 className="text-lg font-semibold text-gray-900">Checkout</h1>
+            <div className="w-6 h-6"></div>
+          </div>
+        </div>
 
         <div className="p-4 space-y-4">
           {/* YOUR ORDER DETAILS */}
@@ -126,14 +147,14 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
               YOUR ORDER DETAILS
             </h2>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="border-b border-gray-200 last:border-b-0 pb-3 last:pb-0"
+                  className="border-b border-gray-200 last:border-b-0 pb-4 last:pb-0"
                 >
                   <div className="flex items-start space-x-3">
-                    {/* Product Image - 16x16 as per image */}
+                    {/* Product Image */}
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       <img
                         src={item.image}
@@ -144,25 +165,26 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
                     <div className="flex-1 min-w-0">
                       {/* Product Name */}
-                      <h3 className="font-medium text-gray-900 text-sm leading-tight mb-1">
+                      <h3 className="font-semibold text-sm text-gray-900 mb-2 line-clamp-2">
                         {item.name}
                       </h3>
 
-                      {/* Price Section */}
-                      <div className="mb-2">
-                        {/* Discount Badge */}
-                        <div className="inline-block bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded mb-1">
-                          20% OFF
-                        </div>
+                      {/* Discount Badge */}
+                      <div className="inline-block bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded mb-2">
+                        20% OFF
+                      </div>
 
-                        {/* Price with strikethrough */}
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm text-gray-500 line-through">
-                            ₹{Math.round(item.price * 1.25)}
-                          </span>
-                          <span className="text-lg font-bold text-gray-900">
-                            ₹{item.price}
-                          </span>
+                      {/* Price Section */}
+                      <div className="flex items-center space-x-2 mb-3">
+                        <span className="text-sm text-gray-500 line-through">
+                          ₹{Math.round(item.price * 1.25)}
+                        </span>
+                        <span className="text-lg font-bold text-gray-900">
+                          ₹{item.price}
+                        </span>
+                        <div className="flex items-center text-sm text-gray-600 ml-2">
+                          <div className="w-4 h-4 bg-gray-400 rounded-full mr-1"></div>
+                          <span>{item.price} + ₹220</span>
                         </div>
                       </div>
 
@@ -176,7 +198,7 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
                                 (item.quantity || 1) - 1
                               )
                             }
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-sm"
+                            className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-sm"
                           >
                             -
                           </button>
@@ -190,7 +212,7 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
                                 (item.quantity || 1) + 1
                               )
                             }
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-sm"
+                            className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-sm"
                           >
                             +
                           </button>
@@ -198,19 +220,22 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
                         <button
                           onClick={() => removeItemFromCart(item.id)}
-                          className="text-gray-400 hover:text-red-500 p-1"
+                          className="p-1 text-red-500 hover:text-red-700"
                         >
                           <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                            className="w-5 h-5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
                           >
                             <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              fillRule="evenodd"
+                              d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                              clipRule="evenodd"
+                            />
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
                             />
                           </svg>
                         </button>
@@ -224,12 +249,12 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
           {/* OFFERS & PROMO CODE */}
           <div className="bg-white rounded-lg shadow-sm p-4">
-            <h3
+            <h2
               className="text-xs font-semibold text-gray-900 mb-4"
               style={{ fontFamily: "Inter" }}
             >
               OFFERS & PROMO CODE
-            </h3>
+            </h2>
             <div className="flex space-x-2">
               <input
                 type="text"
@@ -241,6 +266,10 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
               <button
                 onClick={handlePromoCode}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium"
+                style={{
+                  backgroundColor: theme?.primaryColor || "#1A60E3",
+                  borderColor: theme?.primaryColor || "#1A60E3",
+                }}
               >
                 Apply
               </button>
@@ -256,17 +285,17 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Total</span>
                 <div className="flex items-center">
-                  <span className="font-semibold">₹{total}</span>
-                  <HiOutlineEye className="w-4 h-4 ml-1 text-gray-400" />
+                  <span className="font-semibold">{total}</span>
+                  <div className="w-4 h-4 bg-gray-400 rounded-full ml-1"></div>
                 </div>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Available Points</span>
                 <div className="flex items-center">
                   <span className="font-semibold text-green-600">
-                    -₹{pointsDiscount}
+                    - {pointsDiscount}
                   </span>
-                  <HiOutlineEye className="w-4 h-4 ml-1 text-gray-400" />
+                  <div className="w-4 h-4 bg-gray-400 rounded-full ml-1"></div>
                 </div>
               </div>
               <div className="flex justify-between">
@@ -292,44 +321,58 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 DELIVERY ADDRESS
               </h3>
-              <button
-                onClick={() => setIsAddressModalOpen(true)}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-              >
-                Change
-              </button>
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setIsAddressModalOpen(true)}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                  Change
+                </button>
+                <button
+                  onClick={() => {
+                    const mockAddress = {
+                      id: "1",
+                      name: "Home",
+                      address: address,
+                      streetName: "Business Plaza, Near St. Mary's School",
+                      city: "Delhi",
+                      state: "Delhi",
+                      aptSuite: "Q-102",
+                    };
+                    setAddressToEdit(mockAddress);
+                    setIsEditAddressModalOpen(true);
+                  }}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                  Edit
+                </button>
+              </div>
             </div>
             <div className="space-y-2">
-              <div className="font-semibold text-gray-900">Home</div>
-              <div className="text-xs text-gray-600 leading-relaxed">
+              <div className="flex items-center space-x-2">
+                <svg
+                  className="w-4 h-4 text-gray-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="font-bold text-sm text-gray-900">Home</span>
+              </div>
+              <div className="text-sm text-gray-600 leading-relaxed ml-6">
                 {address}
               </div>
-              <button
-                onClick={() => {
-                  // Create a mock address object for editing
-                  const mockAddress = {
-                    id: "1",
-                    name: "Home",
-                    address: address,
-                    streetName: "Business Plaza, Near St. Mary's School",
-                    city: "Delhi",
-                    state: "Delhi",
-                    aptSuite: "Q-102",
-                  };
-                  setAddressToEdit(mockAddress);
-                  setIsEditAddressModalOpen(true);
-                }}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-              >
-                Edit
-              </button>
             </div>
           </div>
 
-          {/* YOUR ORDER DETAILS WILL BE SENT TO */}
+          {/* YOUR GIFT CARD(S) WILL BE SENT TO */}
           <div className="bg-white rounded-lg shadow-sm p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              YOUR ORDER DETAILS WILL BE SENT TO
+              YOUR GIFT CARD(S) WILL BE SENT TO
             </h3>
 
             <div className="space-y-4">
@@ -342,9 +385,9 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <HiOutlineEnvelope className="absolute right-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <HiOutlineEnvelope className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
                 </div>
               </div>
 
@@ -357,9 +400,9 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <HiOutlinePhone className="absolute right-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <HiOutlinePhone className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
                 </div>
               </div>
             </div>
@@ -388,7 +431,8 @@ const CheckoutMobile: React.FC<CheckoutMobileProps> = () => {
 
             <button
               onClick={handleBuyNow}
-              className="w-full text-white py-3 px-6 rounded-md hover:opacity-90 focus:outline-none focus:ring-2 font-semibold text-lg"
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              disabled={!agreeToTerms || isEmpty}
               style={{
                 backgroundColor: theme?.primaryColor || "#1A60E3",
                 borderColor: theme?.primaryColor || "#1A60E3",

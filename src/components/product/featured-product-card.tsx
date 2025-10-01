@@ -95,7 +95,7 @@ const FeaturedProductCard: React.FC<FeaturedProductCardProps> = ({
           <WishlistButton
             productId={product.id}
             onToggle={handleWishlistToggle}
-            size="md"
+            size="sm"
           />
           <button
             onClick={handlePopupView}

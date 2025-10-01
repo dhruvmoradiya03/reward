@@ -5,12 +5,10 @@ import { useLocalStorage } from "@utils/use-local-storage";
 interface CartProviderState extends State {
   addItemToCart: (item: Item, quantity: number) => void;
   removeItemFromCart: (id: Item["id"]) => void;
-  // updateItem: (id: Item["id"], payload: object) => void;
-  // updateItemQuantity: (id: Item["id"], quantity: number) => void;
+  updateItemQuantity: (id: Item["id"], quantity: number) => void;
   clearItemFromCart: (id: Item["id"]) => void;
   getItemFromCart: (id: Item["id"]) => any | undefined;
   isInCart: (id: Item["id"]) => boolean;
-  // updateCartMetadata: (metadata: Metadata) => void;
 }
 export const cartContext = React.createContext<CartProviderState | undefined>(
   undefined
@@ -44,6 +42,8 @@ export const CartProvider: React.FC = (props) => {
     dispatch({ type: "ADD_ITEM_WITH_QUANTITY", item, quantity });
   const removeItemFromCart = (id: Item["id"]) =>
     dispatch({ type: "REMOVE_ITEM_OR_QUANTITY", id });
+  const updateItemQuantity = (id: Item["id"], quantity: number) =>
+    dispatch({ type: "UPDATE_ITEM", id, item: { quantity } });
   const clearItemFromCart = (id: Item["id"]) =>
     dispatch({ type: "REMOVE_ITEM", id });
   const isInCart = (id: Item["id"]) => !!getItem(state.items, id);
@@ -54,6 +54,7 @@ export const CartProvider: React.FC = (props) => {
       ...state,
       addItemToCart,
       removeItemFromCart,
+      updateItemQuantity,
       clearItemFromCart,
       getItemFromCart,
       isInCart,
